@@ -6,7 +6,7 @@ const config = {
 };
 
 const fonts = {
-  body: "BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;",
+  body: "BlinkMacSystemFont,Inter,Helvetica Neue,sans-serif;",
 };
 
 const customTheme = extendTheme({

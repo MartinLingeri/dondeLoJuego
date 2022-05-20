@@ -10,7 +10,6 @@ import {
   useColorMode,
   Link,
 } from "@chakra-ui/react";
-// import axios from "axios";
 import WebFont from "webfontloader";
 import { FaSun, FaMoon } from "react-icons/fa";
 
@@ -42,77 +41,6 @@ function App() {
     return newString.replaceAll(" ", "-");
   }
 
-  // v1 no funciona (problema con promesas)
-  // async function searchGame() {
-  //   if (game !== "") {
-  //     const response = await fetch(
-  //       `https://api.rawg.io/api/games/${removeSpaces(game)}?key=${key}`
-  //     )
-  //       .then((r) => {
-  //         if (r.ok) {
-  //           console.log(r.json());
-  //           setGameSearched(r.json().name);
-  //           console.log(r.json());
-  //           setSearchResponse(r.json());
-  //         } else {
-  //           setGameSearched({});
-  //           setSearchResponse({});
-  //         }
-  //       })
-  //       .catch((error) => console.error(error));
-
-  //     const store = await fetch(
-  //       `https://api.rawg.io/api/games/${removeSpaces(game)}/stores?key=${key}`
-  //     )
-  //       .then((r) => {
-  //         if (r.ok) {
-  //           setStoreLinks(r.json());
-  //         } else {
-  //           setStoreLinks({});
-  //         }
-  //       })
-  //       .catch((error) => console.error(error));
-  //   }
-  // }
-
-  // v2 no funciona (problema con promesas)
-  // async function searchGame() {
-  //   if (game !== "") {
-  //     const response = await axios
-  //       .get(`https://api.rawg.io/api/games/${removeSpaces(game)}?key=${key}`)
-  //       .then((resp) => {
-  //         if (resp.ok) {
-  //           const respJsonGame = resp.json();
-  //           setGameSearched(respJsonGame.name);
-  //           setSearchResponse(respJsonGame);
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //         setGameSearched({});
-  //         setSearchResponse({});
-  //       });
-
-  //     const store = await axios
-  //       .get(
-  //         `https://api.rawg.io/api/games/${removeSpaces(
-  //           game
-  //         )}/stores?key=${key}`
-  //       )
-  //       .then((resp) => {
-  //         if (resp.ok) {
-  //           const respJsonStores = resp.json();
-  //           setStoreLinks(respJsonStores);
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //         setStoreLinks({});
-  //       });
-  //   }
-  // }
-
-  // v3 funciona pero cuando no encuentra el valor rompe porque no asigna los estados a objetos vacios
   async function searchGame() {
     if (game !== "") {
       try {
@@ -120,7 +48,13 @@ function App() {
         setError(false);
         const response = await fetch(
           `https://api.rawg.io/api/games/${removeSpaces(game)}?key=${key}`
-        ).then((resp) => resp.json());
+        ).then((resp) => {
+          if (!resp.ok) {
+            throw new Error("No se encontro el juego");
+          } else {
+            return resp.json();
+          }
+        });
 
         const store = await fetch(
           `https://api.rawg.io/api/games/${removeSpaces(
@@ -128,19 +62,24 @@ function App() {
           )}/stores?key=${key}`
         ).then((resp) => {
           setLoading(false);
-          return resp.json();
+          if (!resp.ok) {
+            throw new Error("No se encontro el juego");
+          } else {
+            return resp.json();
+          }
         });
 
         setStoreLinks(store);
         setGameSearched(response.name);
         setSearchResponse(response);
       } catch (e) {
+        console.clear();
         setLoading(false);
         setError(true);
         setStoreLinks({});
-        setGameSearched("");
+        setGameSearched(game);
         setSearchResponse({});
-        console.log("game not found");
+        console.error("No se encontro el juego");
       }
     }
   }
@@ -221,7 +160,7 @@ function App() {
                 fontWeight="900"
                 textTransform="capitalize"
               >
-                {game}
+                {gameSearched}
               </Text>
               <Text display="inline-block">
                 , trata de poner el nombre completo

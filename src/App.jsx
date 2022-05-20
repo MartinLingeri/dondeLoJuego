@@ -10,6 +10,7 @@ import {
   useColorMode,
   Link,
 } from "@chakra-ui/react";
+// import axios from "axios";
 import WebFont from "webfontloader";
 import { FaSun, FaMoon } from "react-icons/fa";
 
@@ -21,6 +22,8 @@ function App() {
   const [gameSearched, setGameSearched] = useState("");
   const [storeLinks, setStoreLinks] = useState("");
   const [searchResponse, setSearchResponse] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     WebFont.load({
@@ -39,27 +42,117 @@ function App() {
     return newString.replaceAll(" ", "-");
   }
 
+  // v1 no funciona (problema con promesas)
+  // async function searchGame() {
+  //   if (game !== "") {
+  //     const response = await fetch(
+  //       `https://api.rawg.io/api/games/${removeSpaces(game)}?key=${key}`
+  //     )
+  //       .then((r) => {
+  //         if (r.ok) {
+  //           console.log(r.json());
+  //           setGameSearched(r.json().name);
+  //           console.log(r.json());
+  //           setSearchResponse(r.json());
+  //         } else {
+  //           setGameSearched({});
+  //           setSearchResponse({});
+  //         }
+  //       })
+  //       .catch((error) => console.error(error));
+
+  //     const store = await fetch(
+  //       `https://api.rawg.io/api/games/${removeSpaces(game)}/stores?key=${key}`
+  //     )
+  //       .then((r) => {
+  //         if (r.ok) {
+  //           setStoreLinks(r.json());
+  //         } else {
+  //           setStoreLinks({});
+  //         }
+  //       })
+  //       .catch((error) => console.error(error));
+  //   }
+  // }
+
+  // v2 no funciona (problema con promesas)
+  // async function searchGame() {
+  //   if (game !== "") {
+  //     const response = await axios
+  //       .get(`https://api.rawg.io/api/games/${removeSpaces(game)}?key=${key}`)
+  //       .then((resp) => {
+  //         if (resp.ok) {
+  //           const respJsonGame = resp.json();
+  //           setGameSearched(respJsonGame.name);
+  //           setSearchResponse(respJsonGame);
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //         setGameSearched({});
+  //         setSearchResponse({});
+  //       });
+
+  //     const store = await axios
+  //       .get(
+  //         `https://api.rawg.io/api/games/${removeSpaces(
+  //           game
+  //         )}/stores?key=${key}`
+  //       )
+  //       .then((resp) => {
+  //         if (resp.ok) {
+  //           const respJsonStores = resp.json();
+  //           setStoreLinks(respJsonStores);
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //         setStoreLinks({});
+  //       });
+  //   }
+  // }
+
+  // v3 funciona pero cuando no encuentra el valor rompe porque no asigna los estados a objetos vacios
   async function searchGame() {
     if (game !== "") {
-      const response = await fetch(
-        `https://api.rawg.io/api/games/${removeSpaces(game)}?key=${key}`
-      )
-        .then((resp) => resp.json())
-        .catch((error) => console.log(error));
+      try {
+        setLoading(true);
+        setError(false);
+        const response = await fetch(
+          `https://api.rawg.io/api/games/${removeSpaces(game)}?key=${key}`
+        ).then((resp) => resp.json());
 
-      const store = await fetch(
-        `https://api.rawg.io/api/games/${removeSpaces(game)}/stores?key=${key}`
-      ).then((resp) => resp.json());
+        const store = await fetch(
+          `https://api.rawg.io/api/games/${removeSpaces(
+            game
+          )}/stores?key=${key}`
+        ).then((resp) => {
+          setLoading(false);
+          return resp.json();
+        });
 
-      console.log(response);
-      setStoreLinks(store);
-      setGameSearched(response.name);
-      setSearchResponse(response);
+        setStoreLinks(store);
+        setGameSearched(response.name);
+        setSearchResponse(response);
+      } catch (e) {
+        setLoading(false);
+        setError(true);
+        setStoreLinks({});
+        setGameSearched("");
+        setSearchResponse({});
+        console.log("game not found");
+      }
     }
   }
 
   return (
-    <Stack spacing={4} alignItems="center" justifyContent="center" h="100vh">
+    <Stack
+      spacing={4}
+      alignItems="center"
+      justifyContent="center"
+      h="100vh"
+      marginInline={4}
+    >
       <Stack direction="row" spacing={6}>
         <Heading>¿Dónde Lo Juego?</Heading>
         <IconButton
@@ -71,7 +164,7 @@ function App() {
           onClick={toggleColorMode}
         ></IconButton>
       </Stack>
-      <Box minWidth="md">
+      <Box maxW="md">
         <Stack direction="row" spacing={4}>
           <Input
             placeholder="DOOM Eternal"
@@ -96,38 +189,92 @@ function App() {
           </Button>
         </Stack>
       </Box>
-      {Boolean(gameSearched) && (
-        <Stack direction="row" spacing={2}>
-          <Stack direction="row" spacing={1}>
-            <Text display="inline-block">Podes jugar </Text>
-            <Text
-              display="inline-block"
-              fontWeight="900"
-              textTransform="capitalize"
-            >
-              {gameSearched}
-            </Text>
-            <Text display="inline-block"> en</Text>
-          </Stack>
-          <Stack direction="row" display="inline-block" spacing={2}>
-            {searchResponse.stores.map((store, index) => (
-              <Link
-                key={index}
-                href={`${storeLinks.results[index].url}`}
-                color="blue.300"
-                fontWeight="900"
-                textDecorationLine="underline"
-                textDecorationStyle="dotted"
-                textDecorationThickness="2px"
-                textUnderlineOffset="2px"
-                _hover={{ opacity: 0.7 }}
-                isExternal
-              >
-                {store.store.name}
-              </Link>
-            ))}
-          </Stack>
+      {loading ? (
+        <Stack
+          direction="row"
+          spacing={1}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Text display="inline-block">Buscando </Text>
+          <Text
+            display="inline-block"
+            fontWeight="900"
+            textTransform="capitalize"
+          >
+            {game}
+          </Text>
+          <Text display="inline-block"> ...</Text>
         </Stack>
+      ) : (
+        <Box>
+          {error ? (
+            <Stack
+              direction="row"
+              spacing={1}
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Text display="inline-block">No encontre al </Text>
+              <Text
+                display="inline-block"
+                fontWeight="900"
+                textTransform="capitalize"
+              >
+                {game}
+              </Text>
+              <Text display="inline-block">
+                , trata de poner el nombre completo
+              </Text>
+            </Stack>
+          ) : (
+            <Box>
+              {Object.keys(searchResponse).length !== 0 && (
+                <Stack
+                  direction="row"
+                  display="inline-block"
+                  alignItems="center"
+                  justifyContent="center"
+                  textAlign="center"
+                >
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Text display="inline-block">Podes jugar al</Text>
+                    <Text
+                      display="inline-block"
+                      fontWeight="900"
+                      textTransform="capitalize"
+                    >
+                      {gameSearched}
+                    </Text>
+                    <Text display="inline-block"> en</Text>
+                  </Stack>
+                  {searchResponse.stores.map((store, index) => (
+                    <Box key={index} display="inline-block" paddingBlock={1}>
+                      <Link
+                        href={`${storeLinks.results[index].url}`}
+                        color={colorMode === "light" ? "green.500" : "blue.300"}
+                        fontWeight="900"
+                        textDecorationLine="underline"
+                        textDecorationStyle="dotted"
+                        textDecorationThickness="2px"
+                        textUnderlineOffset="2px"
+                        _hover={{ opacity: 0.7 }}
+                        isExternal
+                      >
+                        {store.store.name}
+                      </Link>
+                    </Box>
+                  ))}
+                </Stack>
+              )}
+            </Box>
+          )}
+        </Box>
       )}
       <Stack
         direction="row"

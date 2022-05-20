@@ -111,6 +111,7 @@ function App() {
             borderWidth={2}
             borderRadius="lg"
             onChange={(e) => handleInputChange(e)}
+            isDisabled={loading ? true : false}
           ></Input>
           <Button
             bgColor={colorMode === "light" ? "green.200" : "blue.500"}

@@ -193,23 +193,29 @@ function App() {
                     </Text>
                     <Text display="inline-block"> en</Text>
                   </Stack>
-                  {searchResponse.stores.map((store, index) => (
-                    <Box key={index} display="inline-block" paddingBlock={1}>
-                      <Link
-                        href={`${storeLinks.results[index].url}`}
-                        color={colorMode === "light" ? "green.500" : "blue.300"}
-                        fontWeight="900"
-                        textDecorationLine="underline"
-                        textDecorationStyle="dotted"
-                        textDecorationThickness="2px"
-                        textUnderlineOffset="2px"
-                        _hover={{ opacity: 0.7 }}
-                        isExternal
-                      >
-                        {store.store.name}
-                      </Link>
-                    </Box>
-                  ))}
+                  {searchResponse.stores ? (
+                    searchResponse.stores.map((store, index) => (
+                      <Box key={index} display="inline-block" paddingBlock={1}>
+                        <Link
+                          href={`${storeLinks.results[index].url}`}
+                          color={
+                            colorMode === "light" ? "green.500" : "blue.300"
+                          }
+                          fontWeight="900"
+                          textDecorationLine="underline"
+                          textDecorationStyle="dotted"
+                          textDecorationThickness="2px"
+                          textUnderlineOffset="2px"
+                          _hover={{ opacity: 0.7 }}
+                          isExternal
+                        >
+                          {store.store.name}
+                        </Link>
+                      </Box>
+                    ))
+                  ) : (
+                    <Text>Ninguna tienda :(</Text>
+                  )}
                 </Stack>
               )}
             </Box>

@@ -7,6 +7,7 @@ import {
   IconButton,
   Box,
   Text,
+  FormControl,
   useColorMode,
   Link,
 } from "@chakra-ui/react";
@@ -41,7 +42,8 @@ function App() {
     return newString.replaceAll(" ", "-");
   }
 
-  async function searchGame() {
+  async function searchGame(e) {
+    e.preventDefault();
     if (game !== "") {
       try {
         setLoading(true);
@@ -104,30 +106,34 @@ function App() {
         ></IconButton>
       </Stack>
       <Box maxW="md">
-        <Stack direction="row" spacing={4}>
-          <Input
-            placeholder="DOOM Eternal"
-            value={game}
-            borderWidth={2}
-            borderRadius="lg"
-            onChange={(e) => handleInputChange(e)}
-            isDisabled={loading ? true : false}
-          ></Input>
-          <Button
-            bgColor={colorMode === "light" ? "green.200" : "blue.500"}
-            borderColor={colorMode === "light" ? "green.400" : "blue.700"}
-            _hover={{
-              opacity: "0.8",
-            }}
-            size="md"
-            paddingInline="8"
-            borderWidth={2}
-            borderRadius="lg"
-            onClick={() => searchGame()}
-          >
-            Buscar
-          </Button>
-        </Stack>
+        <form onSubmit={(e) => searchGame(e)}>
+          <Stack direction="row" spacing={4}>
+            <FormControl>
+              <Input
+                placeholder="DOOM Eternal"
+                value={game}
+                borderWidth={2}
+                borderRadius="lg"
+                onChange={(e) => handleInputChange(e)}
+                isDisabled={loading ? true : false}
+              ></Input>
+            </FormControl>
+            <Button
+              type="submit"
+              bgColor={colorMode === "light" ? "green.200" : "blue.500"}
+              borderColor={colorMode === "light" ? "green.400" : "blue.700"}
+              _hover={{
+                opacity: "0.8",
+              }}
+              size="md"
+              paddingInline="8"
+              borderWidth={2}
+              borderRadius="lg"
+            >
+              Buscar
+            </Button>
+          </Stack>
+        </form>
       </Box>
       {loading ? (
         <Stack

@@ -5,5 +5,8 @@ En la misma poniendo el nombre del juego se muestra las paginas de las tiendas d
 # Deploy
 [dondelojuego.netlify.app](https://dondelojuego.netlify.app)
 
+# Ejemplo
+![ejemplo](example_images/example1.png)
+
 ## Api utilizada
 [RAWG](https://rawg.io/apidocs)

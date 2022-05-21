@@ -46,8 +46,10 @@ function App() {
       try {
         setLoading(true);
         setError(false);
-        const response = await fetch(
-          `https://api.rawg.io/api/games/${removeSpaces(game)}?key=${key}`
+        var response = await fetch(
+          `https://api.rawg.io/api/games?key=${key}&search=/${removeSpaces(
+            game
+          )}`
         ).then((resp) => {
           if (!resp.ok) {
             throw new Error("No se encontro el juego");
@@ -55,11 +57,10 @@ function App() {
             return resp.json();
           }
         });
+        response = response.results[0];
 
         const store = await fetch(
-          `https://api.rawg.io/api/games/${removeSpaces(
-            game
-          )}/stores?key=${key}`
+          `https://api.rawg.io/api/games/${response.slug}/stores?key=${key}`
         ).then((resp) => {
           setLoading(false);
           if (!resp.ok) {
@@ -73,7 +74,6 @@ function App() {
         setGameSearched(response.name);
         setSearchResponse(response);
       } catch (e) {
-        console.clear();
         setLoading(false);
         setError(true);
         setStoreLinks({});

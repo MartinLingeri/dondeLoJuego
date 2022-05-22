@@ -11,7 +11,6 @@ import {
   useColorMode,
   Link,
 } from "@chakra-ui/react";
-import WebFont from "webfontloader";
 import { FaSun, FaMoon } from "react-icons/fa";
 
 import { key } from "./key";
@@ -24,14 +23,6 @@ function App() {
   const [searchResponse, setSearchResponse] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
-  useEffect(() => {
-    WebFont.load({
-      google: {
-        families: ["BlinkMacSystemFont", "Inter", "Helvetica Neue"],
-      },
-    });
-  }, []);
 
   function handleInputChange(e) {
     setGame(e.target.value);
@@ -241,9 +232,9 @@ function App() {
         </Heading>
         <Link
           href="https://rawg.io"
-          fontFamily="Inter"
+          fontFamily="rawg"
           fontSize={28}
-          fontWeight="900"
+          fontWeight="700"
           lineHeight="1"
           letterSpacing={8}
           textTransform="uppercase"

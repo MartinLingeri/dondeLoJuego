@@ -6,7 +6,8 @@ const config = {
 };
 
 const fonts = {
-  body: "BlinkMacSystemFont,Inter,Helvetica Neue,sans-serif;",
+  body: `'BlinkMacSystemFont','Inter', 'Helvetica Neue',sans-serif`,
+  rawg: `'Inter', sans-serif`,
 };
 
 const customTheme = extendTheme({

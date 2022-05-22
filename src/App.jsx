@@ -127,43 +127,37 @@ function App() {
         </form>
       </Box>
       {loading ? (
-        <Stack
-          direction="row"
-          spacing={1}
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Text display="inline-block">Buscando </Text>
+        <Text display="inline-block" textAlign="center">
+          Buscando{" "}
           <Text
+            as="b"
             display="inline-block"
             fontWeight="900"
             textTransform="capitalize"
+            overflowWrap="break-word"
+            wordBreak="break-all"
           >
             {game}
-          </Text>
-          <Text display="inline-block"> ...</Text>
-        </Stack>
+          </Text>{" "}
+          ...
+        </Text>
       ) : (
         <Box>
           {error ? (
-            <Stack
-              direction="row"
-              spacing={1}
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Text display="inline-block">No encontre al </Text>
+            <Text display="inline-block" textAlign="center">
+              No encontre al{" "}
               <Text
+                as="b"
                 display="inline-block"
                 fontWeight="900"
                 textTransform="capitalize"
+                overflowWrap="break-word"
+                wordBreak="break-all"
               >
                 {gameSearched}
-              </Text>
-              <Text display="inline-block">
-                , trata de poner el nombre completo
-              </Text>
-            </Stack>
+              </Text>{" "}
+              , trata de poner el nombre completo
+            </Text>
           ) : (
             <Box>
               {Object.keys(searchResponse).length !== 0 && (
@@ -174,22 +168,20 @@ function App() {
                   justifyContent="center"
                   textAlign="center"
                 >
-                  <Stack
-                    direction="row"
-                    spacing={1}
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <Text display="inline-block">Podes jugar al</Text>
+                  <Text display="inline-block">
+                    Podes jugar al{" "}
                     <Text
+                      as="b"
                       display="inline-block"
                       fontWeight="900"
                       textTransform="capitalize"
+                      overflowWrap="break-word"
+                      wordBreak="break-all"
                     >
                       {gameSearched}
-                    </Text>
-                    <Text display="inline-block"> en</Text>
-                  </Stack>
+                    </Text>{" "}
+                    en
+                  </Text>
                   {searchResponse.stores ? (
                     searchResponse.stores.map((store, index) => (
                       <Box key={index} display="inline-block" paddingBlock={1}>

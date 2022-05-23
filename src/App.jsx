@@ -192,7 +192,7 @@ function App() {
                           paddingBlock={1}
                         >
                           <Link
-                            href={`${storeLinks.results[index].url}`}
+                            href={`${storeLinks.results.find(s=>s.store_id==store.store.id).url}`}
                             color={
                               colorMode === "light" ? "green.500" : "blue.300"
                             }

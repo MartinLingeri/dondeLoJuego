@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   Stack,
+  StackDivider,
   Input,
   Heading,
   Button,
@@ -42,7 +43,7 @@ function App() {
         var response = await fetch(
           `https://api.rawg.io/api/games?key=${key}&search=/${removeSpaces(
             game
-          )}`
+          )}&search_exact=true`
         ).then((resp) => {
           if (!resp.ok) {
             throw new Error("No se encontro el juego");
@@ -161,50 +162,72 @@ function App() {
           ) : (
             <Box>
               {Object.keys(searchResponse).length !== 0 && (
-                <Stack
-                  direction="row"
-                  display="inline-block"
-                  alignItems="center"
-                  justifyContent="center"
-                  textAlign="center"
-                >
-                  <Text display="inline-block">
-                    Podes jugar al{" "}
-                    <Text
-                      as="b"
-                      display="inline-block"
-                      fontWeight="900"
-                      textTransform="capitalize"
-                      overflowWrap="break-word"
-                      wordBreak="break-all"
-                    >
-                      {gameSearched}
-                    </Text>{" "}
-                    en
-                  </Text>
-                  {searchResponse.stores ? (
-                    searchResponse.stores.map((store, index) => (
-                      <Box key={index} display="inline-block" paddingBlock={1}>
-                        <Link
-                          href={`${storeLinks.results[index].url}`}
-                          color={
-                            colorMode === "light" ? "green.500" : "blue.300"
-                          }
-                          fontWeight="900"
-                          textDecorationLine="underline"
-                          textDecorationStyle="dotted"
-                          textDecorationThickness="2px"
-                          textUnderlineOffset="2px"
-                          _hover={{ opacity: 0.7 }}
-                          isExternal
+                <Stack alignItems="center" justifyContent="center">
+                  <Stack
+                    direction="row"
+                    display="inline-block"
+                    alignItems="center"
+                    justifyContent="center"
+                    textAlign="center"
+                  >
+                    <Text display="inline-block">
+                      Podes jugar al{" "}
+                      <Text
+                        as="b"
+                        display="inline-block"
+                        fontWeight="900"
+                        textTransform="capitalize"
+                        overflowWrap="break-word"
+                        wordBreak="break-all"
+                      >
+                        {gameSearched}
+                      </Text>{" "}
+                      en
+                    </Text>
+                    {searchResponse.stores ? (
+                      searchResponse.stores.map((store, index) => (
+                        <Box
+                          key={index}
+                          display="inline-block"
+                          paddingBlock={1}
                         >
-                          {store.store.name}
-                        </Link>
+                          <Link
+                            href={`${storeLinks.results[index].url}`}
+                            color={
+                              colorMode === "light" ? "green.500" : "blue.300"
+                            }
+                            fontWeight="900"
+                            textDecorationLine="underline"
+                            textDecorationStyle="dotted"
+                            textDecorationThickness="2px"
+                            textUnderlineOffset="2px"
+                            _hover={{ opacity: 0.7 }}
+                            isExternal
+                          >
+                            {store.store.name}
+                          </Link>
+                        </Box>
+                      ))
+                    ) : (
+                      <Text>Ninguna tienda :(</Text>
+                    )}
+                  </Stack>
+                  <Text>Plataformas:</Text>
+                  <Stack
+                    direction="row"
+                    flexWrap="wrap"
+                    spacing={4}
+                    divider={<StackDivider />}
+                    alignItems="center"
+                    justifyContent="center"
+                    textAlign="center"
+                  >
+                    {searchResponse.platforms.map((platform, index) => (
+                      <Box paddingBlock={1} key={index} >
+                        {platform.platform.name}
                       </Box>
-                    ))
-                  ) : (
-                    <Text>Ninguna tienda :(</Text>
-                  )}
+                    ))}
+                  </Stack>
                 </Stack>
               )}
             </Box>
